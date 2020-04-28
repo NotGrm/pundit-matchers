@@ -27,6 +27,19 @@ describe 'forbid_action matcher' do
       subject { ForbidActionTestPolicy2.new }
       it { is_expected.to forbid_action(:test) }
     end
+
+    context 'test? raise not authorized error' do
+      before do
+        class ForbidActionTestPolicy7
+          def test?
+            raise Pundit::NotAuthorizedError
+          end
+        end
+      end
+
+      subject { ForbidActionTestPolicy7.new }
+      it { is_expected.to forbid_action(:test) }
+    end
   end
 
   context 'one optional argument is specified' do
@@ -57,6 +70,20 @@ describe 'forbid_action matcher' do
       subject { ForbidActionTestPolicy4.new }
       it { is_expected.to forbid_action(:test, 'argument') }
     end
+
+    context 'test? with optional argument raise not authorized error' do
+      before do
+        class ForbidActionTestPolicy8
+          def test?(argument)
+            raise Pundit::NotAuthorizedError unless argument == 'argument'
+            false
+          end
+        end
+      end
+
+      subject { ForbidActionTestPolicy8.new }
+      it { is_expected.to forbid_action(:test, 'argument') }
+    end
   end
 
   context 'more than one argument is specified' do
@@ -85,6 +112,19 @@ describe 'forbid_action matcher' do
       end
 
       subject { ForbidActionTestPolicy6.new }
+      it { is_expected.to forbid_action(:test, 'one', 'two', 'three') }
+    end
+
+    context 'test? with optional arguments raise not authorized error' do
+      before do
+        class ForbidActionTestPolicy9
+          def test?(one, two, three)
+            raise Pundit::NotAuthorizedError unless one == 'one' && two == 'two' && three == 'three'
+          end
+        end
+      end
+
+      subject { ForbidActionTestPolicy9.new }
       it { is_expected.to forbid_action(:test, 'one', 'two', 'three') }
     end
   end

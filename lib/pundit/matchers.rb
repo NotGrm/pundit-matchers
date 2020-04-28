@@ -1,4 +1,5 @@
 require 'rspec/core'
+require 'pundit'
 
 module Pundit
   module Matchers
@@ -27,6 +28,8 @@ module Pundit
         else
           !policy.public_send("#{action}?")
         end
+      rescue Pundit::NotAuthorizedError
+        true
       end
 
       failure_message do |policy|
